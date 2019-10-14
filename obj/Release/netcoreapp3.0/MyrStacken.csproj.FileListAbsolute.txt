@@ -8,3 +8,4 @@ C:\Users\Tim Roberts\Documents\MyrStacken\obj\Release\netcoreapp3.0\MyrStacken.A
 C:\Users\Tim Roberts\Documents\MyrStacken\obj\Release\netcoreapp3.0\MyrStacken.AssemblyInfo.cs
 C:\Users\Tim Roberts\Documents\MyrStacken\obj\Release\netcoreapp3.0\MyrStacken.dll
 C:\Users\Tim Roberts\Documents\MyrStacken\obj\Release\netcoreapp3.0\MyrStacken.pdb
+C:\Users\Tim Roberts\Documents\MyrStacken\obj\Release\netcoreapp3.0\MyrStacken.csprojAssemblyReference.cache

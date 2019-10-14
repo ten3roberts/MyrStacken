@@ -10,11 +10,6 @@ namespace MyrStacken
         string[] all_names;
         //Indicates if name at pos in names is occupied
         List<string> available_names;
-        public static string Input(string msg)
-        {
-            Console.Write(msg + " > ");
-            return Console.ReadLine();
-        }
         public static string Title(string str)
         {
             if (str == "" || str == null) return "";
@@ -71,7 +66,8 @@ namespace MyrStacken
         void InputHandler()
         {
             //The different parts of the command separated by spaces. The fisrt one is the command itself, the others are aguments
-            string[] parts = Input("\nEnter command >").ToLower().Split(' ');
+            Console.Write("\nEnter command > ");
+            string[] parts = Console.ReadLine().ToLower().Split(' ');
 
             Dictionary<string, string> args = new Dictionary<string, string>();
             //Making a dictionary of the flags and params, skipping command itself
