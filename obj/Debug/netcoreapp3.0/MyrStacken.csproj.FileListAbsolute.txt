@@ -1,0 +1,11 @@
+C:\Users\Tim Roberts\Documents\MyrStacken\obj\Debug\netcoreapp3.0\MyrStacken.csprojAssemblyReference.cache
+C:\Users\Tim Roberts\Documents\MyrStacken\obj\Debug\netcoreapp3.0\MyrStacken.AssemblyInfoInputs.cache
+C:\Users\Tim Roberts\Documents\MyrStacken\obj\Debug\netcoreapp3.0\MyrStacken.AssemblyInfo.cs
+C:\Users\Tim Roberts\Documents\MyrStacken\bin\Debug\netcoreapp3.0\MyrStacken.exe
+C:\Users\Tim Roberts\Documents\MyrStacken\bin\Debug\netcoreapp3.0\MyrStacken.deps.json
+C:\Users\Tim Roberts\Documents\MyrStacken\bin\Debug\netcoreapp3.0\MyrStacken.runtimeconfig.json
+C:\Users\Tim Roberts\Documents\MyrStacken\bin\Debug\netcoreapp3.0\MyrStacken.runtimeconfig.dev.json
+C:\Users\Tim Roberts\Documents\MyrStacken\bin\Debug\netcoreapp3.0\MyrStacken.dll
+C:\Users\Tim Roberts\Documents\MyrStacken\bin\Debug\netcoreapp3.0\MyrStacken.pdb
+C:\Users\Tim Roberts\Documents\MyrStacken\obj\Debug\netcoreapp3.0\MyrStacken.dll
+C:\Users\Tim Roberts\Documents\MyrStacken\obj\Debug\netcoreapp3.0\MyrStacken.pdb
