@@ -71,7 +71,7 @@ namespace MyrStacken
         void InputHandler()
         {
             //The different parts of the command separated by spaces. The fisrt one is the command itself, the others are aguments
-            string[] parts = Input("\nEnter command from").ToLower().Split(' ');
+            string[] parts = Input("\nEnter command >").ToLower().Split(' ');
 
             Dictionary<string, string> args = new Dictionary<string, string>();
             //Making a dictionary of the flags and params, skipping command itself
