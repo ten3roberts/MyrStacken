@@ -20,8 +20,15 @@ namespace MyrStacken
         public static int Num(string str)
         {
             int tmp;
-            if (!int.TryParse(str, out tmp) && str.Length > 0) Console.WriteLine("Invalid number '" + str + "'");
+            if (!int.TryParse(str, out tmp) && str.Length > 0) return -1;
             return tmp;
+        }
+
+        public static void Print(string text, ConsoleColor color = ConsoleColor.White)
+        {
+            Console.ForegroundColor = color;
+            Console.Write(text);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         //A wrapper for the tryGetValue function to give a return value instead of out argument and un-nullify result
@@ -66,7 +73,7 @@ namespace MyrStacken
         void InputHandler()
         {
             //The different parts of the command separated by spaces. The fisrt one is the command itself, the others are aguments
-            Console.Write("\nEnter command > ");
+            Print("\nEnter Command > ", ConsoleColor.Green);
             string[] parts = Console.ReadLine().ToLower().Split(' ');
 
             Dictionary<string, string> args = new Dictionary<string, string>();
@@ -111,15 +118,21 @@ namespace MyrStacken
                     Console.WriteLine(header);
                     break;
                 case "help":
-                    Console.WriteLine(
-                        "add : Usage \"add {name} {numLegs}\"\n\tadds an ant with name and number of legs\n" +
-                        "remove/rm : Usage \"remove {flag} {param} ...\"\n\tRemoves an ant with given parameters. Removes none if no arguments are given.\n\t-n : by name\n\t-l : by number of legs\n\t-a : removes all\n" +
-                        "list/ls : Usage \"list {flag} {param} ...\"\n\tLists all ants in the colony. Displays ants in order of insertion if no arguments are supplied\n\t-l : show ants with matching amount of legs\n\t-sl : sorts by amount of legs\n\t-sn : sorts by name\n" +
-                        "find : Usage \"find {flag} {param} ...\"\n\tFinds ant by specified parameters. Displays all if no arguments are given.\n\t-n : Displays the ant with matching name\n\t-l : Displays all ants with matching amount of legs\n" +
-                        "generate/gen : Usage {flag} {param} ...\n\tGenerates random ants\n\t-c : Amount of ants to generate. Default 1\n\t-minl : Minimum amount of legs per ant. Default : 1\n\t-maxl : Maximum of legs per ant. Default 10\n" +
-                        "exit : Closes the program\n" +
-                        "Several flags can be used at the same time and are not order dependent"
-                        );
+                    Print("add", ConsoleColor.Blue);
+                    Console.WriteLine(" : Usage \"add {name} {numLegs}\"\n\tadds an ant with name and number of legs\n");
+                    Print("remove/rm", ConsoleColor.Blue);
+                    Console.WriteLine(" : Usage \"remove {flag} {param} ...\"\n\tRemoves an ant with given parameters. Removes none if no arguments are given.\n\t-n : by name\n\t-l : by number of legs\n\t-a : removes all\n");
+                    Print("list/ls", ConsoleColor.Blue);
+                    Console.WriteLine(" : Usage \"list {flag} {param} ...\"\n\tLists all ants in the colony. Displays ants in order of insertion if no arguments are supplied\n\t-l : show ants with matching amount of legs\n\t-sl : sorts by amount of legs\n\t-sn : sorts by name\n");
+                    Print("list/ls", ConsoleColor.Blue);
+                    Console.WriteLine(" : Usage \"find {flag} {param} ...\"\n\tFinds ant by specified parameters. Displays all if no arguments are given.\n\t-n : Displays the ant with matching name\n\t-l : Displays all ants with matching amount of legs\n");
+                    Print("generate/gen", ConsoleColor.Blue);
+                    Console.WriteLine(" : Usage {flag} {param} ...\n\tGenerates random ants\n\t-c : Amount of ants to generate. Default 1\n\t-minl : Minimum amount of legs per ant. Default : 1\n\t-maxl : Maximum of legs per ant. Default 10\n");
+                    Print("clear", ConsoleColor.Blue);
+                    Console.WriteLine(" : Clears the screen\n");
+                    Print("exit", ConsoleColor.Blue);
+                    Console.WriteLine(" : Closes the program\n");
+
                     break;
                 case "exit":
                     should_exit = true;
@@ -148,22 +161,10 @@ namespace MyrStacken
                     return;
                 }
             }
-            if (name.Length == 0)
-            {
-                Console.WriteLine("Ant's name can't be empty");
+            Ant tmp = new Ant(name, num_legs);
+            if (!tmp.valid)
                 return;
-            }
-            if (name.Length > 10)
-            {
-                Console.WriteLine("Ant's name can't be more than 10 characters long");
-                return;
-            }
-            if (num_legs < 0)
-            {
-                Console.WriteLine("Ant's number of legs can't be negative");
-                return;
-            }
-            ants.Add(new Ant(name, num_legs));
+            ants.Add(tmp);
             Console.WriteLine("Adding ant " + name + " with " + num_legs + " legs");
             //Removes name from available_names if it exists to avoid generate command to generate duplicates
             for (int i = 0; i < available_names.Count; i++) if (available_names[i] == name) available_names.RemoveAt(i);
@@ -247,8 +248,10 @@ namespace MyrStacken
 
             if (compare != 0)
                 result.Sort(comparer);
-            for (int i = 0; i < result.Count; i++) { Console.WriteLine("[" + i + "]: " + result[i].Name + ", " + result[i].NumLegs); }
-            Console.WriteLine("Ants listed: " + result.Count + "/" + ants.Count);
+            for (int i = 0; i < result.Count; i++) { Console.Write("[" + i.ToString().PadLeft((result.Count-1).ToString().Length, '0') + "]: "); result[i].Print(); }
+
+            //Prints the total amount of ants found and changes the color accordingly
+            Print("Ants listed: " + result.Count + "/" + ants.Count + "\n", (result.Count == 0 ? ConsoleColor.Red : result.Count == ants.Count ? ConsoleColor.Blue : ConsoleColor.Magenta));
         }
 
         void Generate(Dictionary<string, string> args)
@@ -292,6 +295,7 @@ namespace MyrStacken
     {
         string name;
         int numLegs;
+        public bool valid;
         public string Name
         {
             get { return name; }
@@ -300,11 +304,13 @@ namespace MyrStacken
                 if (value.Length == 0)
                 {
                     Console.WriteLine("Ant's name can't be empty");
+                    valid = false;
                     return;
                 }
                 if (value.Length >= 10)
                 {
                     Console.WriteLine("Ant's name can't be more than 10 characters long");
+                    valid = false;
                     return;
                 }
                 name = value;
@@ -317,14 +323,21 @@ namespace MyrStacken
             {
                 if (value < 0)
                 {
-                    Console.WriteLine("Ant's number of legs can't be negative");
+                    Program.Print("Ants can't have negative amount of legs\n", ConsoleColor.Red);
+                    valid = false;
+                    return;
+                }
+                if(value > 1000)
+                {
+                    Program.Print("Ants cant have more than 1000 legs\n", ConsoleColor.Red);
+                    valid = false;
                     return;
                 }
                 numLegs = value;
             }
         }
-
-        public Ant() { name = "unnamed"; numLegs = 4; }
-        public Ant(string name, int numLegs) { this.Name = Program.Title(name); NumLegs = numLegs; }
+        public void Print() { Program.Print(name.PadRight(11, ' '), ConsoleColor.Yellow); Console.Write(" | ");  Program.Print(numLegs.ToString(), ConsoleColor.Magenta); Console.WriteLine(); }
+        public Ant() { valid = false; name = "unnamed"; numLegs = 0; }
+        public Ant(string name, int numLegs) { valid = true; Name = Program.Title(name); NumLegs = numLegs; }
     }
 }
