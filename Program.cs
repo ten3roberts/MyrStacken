@@ -253,8 +253,10 @@ namespace MyrStacken
         // Prints the amount of ants listed of the total amount of ants and colors it differently depending if all, some or none ants were found
         void ListAnts(Dictionary<string, string> args)
         {
-            //0 : Nothing, 1 : By name, 2 : By legs
-            int compare = (args.ContainsKey("-sn") ? 1 : args.ContainsKey("-sl") ? 2 : 0);
+            //0 : Nothing, 1 : By legs, 2 : By name, 3 : both
+            bool sort_name = args.ContainsKey("-sn");
+            bool sort_legs = args.ContainsKey("-sl");
+            int compare = (sort_name && sort_legs ? 3 : sort_legs ? 2 : sort_name ? 1 : 0);
             args["-m"] = "";
 
             List<Ant> result = Find(args);
@@ -264,10 +266,12 @@ namespace MyrStacken
                 comparer = new CompareNames();
             else if (compare == 2)
                 comparer = new CompareLegs();
+            else if (compare == 3)
+                comparer = new CompareBoth();
 
             if (compare != 0)
                 result.Sort(comparer);
-            for (int i = 0; i < result.Count; i++) { Console.Write("[" + i.ToString().PadLeft((result.Count-1).ToString().Length, '0') + "]: "); result[i].Print(); }
+            for (int i = 0; i < result.Count; i++) { Console.Write("[" + i.ToString().PadLeft((result.Count - 1).ToString().Length, '0') + "]: "); result[i].Print(); }
 
             //Prints the total amount of ants found and changes the color accordingly
             Print("Ants listed: " + result.Count + "/" + ants.Count + "\n", (result.Count == 0 ? ConsoleColor.Red : result.Count == ants.Count ? ConsoleColor.Blue : ConsoleColor.Magenta));
@@ -312,6 +316,15 @@ namespace MyrStacken
     public class CompareLegs : IComparer<Ant>
     { public int Compare(Ant a, Ant b) { return (a.NumLegs >= b.NumLegs ? 1 : -1); } }
 
+    public class CompareBoth : IComparer<Ant>
+    {
+        public int Compare(Ant a, Ant b)
+        {
+            if (a.NumLegs == b.NumLegs) return string.Compare(a.Name, b.Name);
+            return (a.NumLegs >= b.NumLegs ? 1 : -1);
+        }
+    }
+
     // The class describing an ant. No childs of this class exist
     public class Ant
     {
@@ -349,7 +362,7 @@ namespace MyrStacken
                     valid = false;
                     return;
                 }
-                if(value > 1000)
+                if (value > 1000)
                 {
                     Program.Print("Ants cant have more than 1000 legs\n", ConsoleColor.Red);
                     valid = false;
@@ -360,7 +373,7 @@ namespace MyrStacken
         }
 
         // Formats and prints the ant's name and number of legs color coded
-        public void Print() { Program.Print(name.PadRight(11, ' '), ConsoleColor.Yellow); Console.Write(" | ");  Program.Print(numLegs.ToString(), ConsoleColor.Magenta); Console.WriteLine(); }
+        public void Print() { Program.Print(name.PadRight(11, ' '), ConsoleColor.Yellow); Console.Write(" | "); Program.Print(numLegs.ToString(), ConsoleColor.Magenta); Console.WriteLine(); }
 
         public Ant(string name, int numLegs) { valid = true; Name = Program.Title(name); NumLegs = numLegs; }
     }
