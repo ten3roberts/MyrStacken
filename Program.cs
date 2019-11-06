@@ -7,9 +7,13 @@ namespace MyrStacken
     class Program
     {
         const string header = "--- Myrstacken ---";
+        // Indicates all names used to generate random names
         string[] all_names;
-        //Indicates if name at pos in names is occupied
+        // Indicates all random names that are not yet used
         List<string> available_names;
+
+        // Static functions implmenting some additional functionality
+        // Makes a string all lowercase and puts the first character in uppercase
         public static string Title(string str)
         {
             if (str == "" || str == null) return "";
@@ -17,6 +21,8 @@ namespace MyrStacken
             result[0] = char.ToUpper(result[0]);
             return new string(result);
         }
+
+        // A wrapper for int.TryPasre function to give a return value instead of 'out' argument
         public static int Num(string str)
         {
             int tmp;
@@ -24,6 +30,7 @@ namespace MyrStacken
             return tmp;
         }
 
+        // Prints a string to the console in a specified color
         public static void Print(string text, ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = color;
@@ -31,7 +38,7 @@ namespace MyrStacken
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        //A wrapper for the tryGetValue function to give a return value instead of out argument and un-nullify result
+        //A wrapper for the tryGetValue function to give a return value instead of 'out' argument and un-nullify result
         public string GetValue(Dictionary<string, string> dictionary, string key)
         {
             string tmp;
@@ -39,13 +46,14 @@ namespace MyrStacken
 
             return tmp;
         }
-        //A flag indicating if the program should exit
+
+        // A flag indicating if the program should exit. Is set by InputHandler to close the program loop
         bool should_exit;
-        //A list containing all the ants in the 'hill
+        // A list containing all the ants in the 'hill
         List<Ant> ants;
         Program()
         {
-            //Loading file Names.txt and loading all the names to be used by the Generate function
+            // Loading file Names.txt and loading all the names to be used by the Generate function to create random names
             all_names = File.ReadAllLines("./Names.txt");
             available_names = new List<string>(all_names);
 
@@ -69,30 +77,33 @@ namespace MyrStacken
             }
         }
 
-        //Handles commands
+        // Handles commands
         void InputHandler()
         {
-            //The different parts of the command separated by spaces. The fisrt one is the command itself, the others are aguments
             Print("\nEnter Command > ", ConsoleColor.Green);
+
+            // The different parts of the command separated by spaces. The first one is the command itself, the others are arguments
             string[] parts = Console.ReadLine().ToLower().Split(' ');
 
+            // Find if options (arguments beginning with a -) are present in the arguments and loads them with their corresponding value into a dictionary
             Dictionary<string, string> args = new Dictionary<string, string>();
-            //Making a dictionary of the flags and params, skipping command itself
+            // Making a dictionary of the flags and params, skipping command itself
             for (int i = 1; i < parts.Length; i++)
             {
-                //If current part is a flag
-                //Checking for empty arg if there is a space at the end of the command
+                // If current part is a flag
+                // Checking for empty arg if there is a space at the end of the command
                 if (parts[i] != "" && parts[i][0] == '-')
                 {
-                    //And next part is not a flag; associate flag with param
+                    // And next part is not a flag; associate flag with param
                     if (i < parts.Length - 1 && parts[i + 1][0] != '-')
                         args[parts[i]] = parts[i + 1];
-                    //If only flag is present, it is set to empty but existing
+                    // If only flag is present, it is set to empty but existing
                     else
                         args[parts[i]] = "";
                 }
             }
 
+            // Runs the correct command and issues a error message if the command does not exist
             switch (parts[0])
             {
                 case "add":
@@ -143,6 +154,7 @@ namespace MyrStacken
             }
         }
 
+        // Adds an ant to the stack and also checks if an ant with that name already exists or the ant parameters were invalid
         void Add(string[] args)
         {
             if (args.Length < 3)
@@ -170,6 +182,8 @@ namespace MyrStacken
             for (int i = 0; i < available_names.Count; i++) if (available_names[i] == name) available_names.RemoveAt(i);
 
         }
+
+        //Removes one or more ants from the stack specified by the options given
         void Remove(Dictionary<string, string> args)
         {
             string name_arg = Title(GetValue(args, "-n"));
@@ -204,6 +218,7 @@ namespace MyrStacken
             }
         }
 
+        // Finds all ants matching the given options
         List<Ant> Find(Dictionary<string, string> args)
         {
             List<Ant> result = new List<Ant>();
@@ -232,6 +247,8 @@ namespace MyrStacken
             return result;
         }
 
+        // Uses find internally and sorts the input according to the options given and then prints it formatted
+        // Prints the amount of ants listed of the total amount of ants and colors it differently depending if all, some or none ants were found
         void ListAnts(Dictionary<string, string> args)
         {
             //0 : Nothing, 1 : By name, 2 : By legs
@@ -254,6 +271,7 @@ namespace MyrStacken
             Print("Ants listed: " + result.Count + "/" + ants.Count + "\n", (result.Count == 0 ? ConsoleColor.Red : result.Count == ants.Count ? ConsoleColor.Blue : ConsoleColor.Magenta));
         }
 
+        // Generates a random set of ants according to the given options
         void Generate(Dictionary<string, string> args)
         {
             Random random = new Random();
@@ -291,6 +309,7 @@ namespace MyrStacken
     public class CompareLegs : IComparer<Ant>
     { public int Compare(Ant a, Ant b) { return (a.NumLegs >= b.NumLegs ? 1 : -1); } }
 
+    // The class describing an ant. No childs of this class exist
     public class Ant
     {
         string name;
@@ -336,8 +355,12 @@ namespace MyrStacken
                 numLegs = value;
             }
         }
+
+        // Formats and prints the ant's name and number of legs color coded
         public void Print() { Program.Print(name.PadRight(11, ' '), ConsoleColor.Yellow); Console.Write(" | ");  Program.Print(numLegs.ToString(), ConsoleColor.Magenta); Console.WriteLine(); }
+
         public Ant() { valid = false; name = "unnamed"; numLegs = 0; }
+
         public Ant(string name, int numLegs) { valid = true; Name = Program.Title(name); NumLegs = numLegs; }
     }
 }
