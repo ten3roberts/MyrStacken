@@ -159,7 +159,9 @@ namespace MyrStacken
         {
             if (args.Length < 3)
             {
-                Console.WriteLine("Incorrect usage of add, type 'help' for usage");
+                Print("Incorrect usage of add\n", ConsoleColor.Red);
+                Print("Usage \"add {name} {numLegs}\"\n");
+                Print("Type 'help' for more info\n");
                 return;
             }
             string name = Title(args[1]);
@@ -303,6 +305,7 @@ namespace MyrStacken
         }
     }
 
+    // Two compare functions for sorting the ants by name or legs
     public class CompareNames : IComparer<Ant>
     { public int Compare(Ant a, Ant b) { return string.Compare(a.Name, b.Name); } }
 
