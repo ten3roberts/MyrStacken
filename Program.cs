@@ -359,8 +359,6 @@ namespace MyrStacken
         // Formats and prints the ant's name and number of legs color coded
         public void Print() { Program.Print(name.PadRight(11, ' '), ConsoleColor.Yellow); Console.Write(" | ");  Program.Print(numLegs.ToString(), ConsoleColor.Magenta); Console.WriteLine(); }
 
-        public Ant() { valid = false; name = "unnamed"; numLegs = 0; }
-
         public Ant(string name, int numLegs) { valid = true; Name = Program.Title(name); NumLegs = numLegs; }
     }
 }
