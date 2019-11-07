@@ -210,7 +210,7 @@ namespace MyrStacken
                     if (verbose)
                         Console.WriteLine("Removing ant " + ants[i].Name);
 
-                    //If the ant to be removed's name was in the available_names, add it back as available so it can be picked again by gen
+                    // If the ant to be removed's name was in the available_names, add it back as available so it can be picked again by 'gen'
                     for (int j = 0; j < all_names.Length; j++) if (all_names[j] == ants[i].Name) available_names.Add(ants[i].Name);
 
                     ants.RemoveAt(i);
@@ -253,10 +253,13 @@ namespace MyrStacken
         // Prints the amount of ants listed of the total amount of ants and colors it differently depending if all, some or none ants were found
         void ListAnts(Dictionary<string, string> args)
         {
-            //0 : Nothing, 1 : By legs, 2 : By name, 3 : both
+            // 0 : Nothing, 1 : By legs, 2 : By name, 3 : Both
             bool sort_name = args.ContainsKey("-sn");
             bool sort_legs = args.ContainsKey("-sl");
-            int compare = (sort_name && sort_legs ? 3 : sort_legs ? 2 : sort_name ? 1 : 0);
+
+            int compare = (sort_name && sort_legs ? 3 : args.ContainsKey("-snl") ? 3 : args.ContainsKey("-sln") ? 3 : sort_legs ? 2 : sort_name ? 1 : 0) ;
+
+            // Adds the -m (mute) option for using the 'find' command internally without it printing to screen
             args["-m"] = "";
 
             List<Ant> result = Find(args);
@@ -273,7 +276,7 @@ namespace MyrStacken
                 result.Sort(comparer);
             for (int i = 0; i < result.Count; i++) { Console.Write("[" + i.ToString().PadLeft((result.Count - 1).ToString().Length, '0') + "]: "); result[i].Print(); }
 
-            //Prints the total amount of ants found and changes the color accordingly
+            // Prints the total amount of ants found and changes the color accordingly
             Print("Ants listed: " + result.Count + "/" + ants.Count + "\n", (result.Count == 0 ? ConsoleColor.Red : result.Count == ants.Count ? ConsoleColor.Blue : ConsoleColor.Magenta));
         }
 
@@ -285,37 +288,44 @@ namespace MyrStacken
             int min_legs = 1;
             int max_legs = 10;
 
+
+            // Loads the given options into their corresponding variables
             if (args.ContainsKey("-c")) amount = Num(args["-c"]);
             if (args.ContainsKey("-minl")) min_legs = Num(args["-minl"]);
             if (args.ContainsKey("-maxl")) max_legs = Num(args["-maxl"]);
 
             for (int i = 0; i < amount; i++)
             {
-                //There are no more available names from the list loaded from file
+                // There are no more available names from the list loaded from file
                 if (available_names.Count == 0)
                 {
-                    Console.WriteLine("No more available names to choose. Stopping command");
+                    Console.WriteLine("No more available names to choose; Stopping command");
                     return;
                 }
 
-                //Picks a random name from available names list
+                // Picks a random name from available names list
                 int name_id = random.Next(0, available_names.Count);
                 string name = available_names[name_id];
                 int numLegs = random.Next(min_legs, max_legs);
 
-                //Uses the add command to add the new ant
+                // Uses the 'add' command to add the new ant
                 Add(new string[] { "add", name, numLegs.ToString() });
             }
         }
     }
 
-    // Two compare functions for sorting the ants by name or legs
+    // Compare functor for sorting by name alphabetically
+    // Option -sn
     public class CompareNames : IComparer<Ant>
     { public int Compare(Ant a, Ant b) { return string.Compare(a.Name, b.Name); } }
 
+    // Compare functor for sorting by amount of legs
+    // Option -sl
     public class CompareLegs : IComparer<Ant>
     { public int Compare(Ant a, Ant b) { return (a.NumLegs >= b.NumLegs ? 1 : -1); } }
 
+    // Compare functor for first sorting by amount of legs, and then sorts ants with equal amount of legs alphabetically
+    // Option { -sl -sn } activates when both sorting options are used
     public class CompareBoth : IComparer<Ant>
     {
         public int Compare(Ant a, Ant b)
@@ -325,7 +335,7 @@ namespace MyrStacken
         }
     }
 
-    // The class describing an ant. No childs of this class exist
+    // The class describing an ant. No derived classes exist of this class
     public class Ant
     {
         string name;
